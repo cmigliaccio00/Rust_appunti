@@ -1,8 +1,3 @@
-<style> 
-    body{
-        text-align: justify; 
-    } 
-</style>
 # `Rust::appunti`
 <div style='font-family: Arial; 
             text-align: right; margin-top: -20px; 
@@ -10,6 +5,12 @@
             border-top: 1px solid black'>
     &copy2024 <i>Carlo MIGLIACCIO</i>
 </div>
+
+<style>
+    body{
+        text-align: justify;
+    }
+</style>
 
 <br>
 
