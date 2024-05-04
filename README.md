@@ -6,12 +6,6 @@
     &copy2024 <i>Carlo MIGLIACCIO</i>
 </div>
 
-<style>
-    body{
-        text-align: justify;
-    }
-</style>
-
 <br>
 
 Questi appunti sono rielaborazione di materiale di vario tipo:
