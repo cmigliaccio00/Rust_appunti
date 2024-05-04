@@ -1,3 +1,4 @@
+
 <style> 
     body{
         text-align: justify; 
@@ -5,6 +6,7 @@
 
     h2{ margin: 0px; }
 </style>
+
 # `Rust::possesso`
 <div style='font-family: Arial; 
             text-align: right; margin-top: -20px; 
@@ -12,6 +14,7 @@
             border-top: 1px solid black'>
     &copy2024 <i>Carlo MIGLIACCIO</i>
 </div>
+
 Le caratteristiche di `Rust` descritte in questo capitolo, come ad esempio il possesso ed il movimento, sono quelle che fanno del linguaggio un linguaggio di programmazione che sia *memory safe*. L'obiettivo finale è quello di introdurre dei **meccanismi** per evitare i tre problemi legati all'allocazione della memoria: (i) memory leakage, (ii) double free, (iii) dangling pointer.
 
 ## Sommario

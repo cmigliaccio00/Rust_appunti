@@ -19,11 +19,11 @@ Questi appunti sono rielaborazione di materiale di vario tipo:
 * estratti di documentazione ufficiale.
 
 ## Sommario
-* [Possesso](1_Possesso.md) 
-* [Tipi Composti](2_TipiComposti.md)
-* [Polimorfismo](3_Polimorfismo.md)
-* [Tempi di vita](4_Lifetime.md)
-* [Chiusure](5_Lifetime)
+* [Possesso](1_Possesso.pdf) 
+* [Tipi Composti](2_TipiComposti.pdf)
+* [Polimorfismo]()
+* [Tempi di vita]()
+* [Chiusure]()
 * [Gestione Errori]()
 * [Iteratori]()
 * [Collezioni]()
