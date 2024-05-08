@@ -130,7 +130,7 @@ I **tipi semplici** e le loro combinazioni (esempio: tuple e array di numeri) so
 
 ## Copia e movimento
 La figura seguente mostra la differenza tra **Copia** e **Movimento**
-![](img/copy_move.png)
+![](/img/copy_move.png)
 Nel caso in cui c'è moviemento una semplice assegnazione rende la variabile di partenza non inizializzata, nel caso in cui il valore contenuto è copiabile e avvenga un assegnazione, posso continuare ad usare entrambe le variabili senza problemi $\to$ non c'è bisogno di gestire il rilascio di risorse allocate dal SO. Per concludere questo paragrafo forniamo qui un ulteriore esempio:
 ```rust
 let my_string="Ciao sono Carlo".to_string(); 
@@ -203,7 +203,7 @@ ref_mut.1 = 6;
 ### Ref vs RefMut
 La figura seguente riassume in modo efficace i concetti che sono stati appena esposti.
 
-![](img/refs.png)
+![](/img/refs.png)
 
 <a id='slice'></a>
 

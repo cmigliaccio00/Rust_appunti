@@ -6,7 +6,7 @@
     h2{ margin: 0px; }
 </style>
 
-# `Rust::io`
+# `Rust::smart_pointers`
 <div style='font-family: Arial; 
             text-align: right; margin-top: -20px; 
             font-size: 14px;
