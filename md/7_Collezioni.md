@@ -73,14 +73,21 @@ V.push(3); V.push(4); V.push(8);
 V.retain(|&x| x%2==0);
 ```
 
+Per maggiori dettagli, si veda: [Rust Documentation: VecDeque\<T\>]()
+
 ### `LinkedList<T>`
 E' una struttura dati che modella una **lista doppiamente concatenata**, similmente a `VecDeque<T>` per la presenza del doppio puntatore (successore e predecessore) permette di inserire ed estrarre elementi con costo costante.
 Tuttavia si preferisce l'uso di `Vec` e `VecDeque` per prestazioni migliori e uso migliore della memoria.
 
 Non c'è un metodo per ordinare una lista. Quello che invece si può fare è trasformare una `LinkedList<T>` in un `Vec<T>` passando per l'iteratore e poi ricostruire la linked list dopo aver ordinato il vettore.
 
+Per maggiori dettagli, si veda: [Rust Documentation: LinkedList\<T\>]()
+
 ## Mappe
 Una **mappa** in generale èuna collezione di coppie con chiave di tipo `K` e valore di tipo `V`, sia che la realizzo con una Tabella di Hash che con un albero bilanciato.
+
+Per maggiori dettagli, si veda: [Rust Documentation: HashMap\<K,V\>]()
+Per maggiori dettagli, si veda: [Rust Documentation: BTreeMap\<K,V\>]()
 
 ### `HashMap<K,V>`
 In questo caso i valori sono salvati in memoria come una singola **tabella di hash**, si preferisce l'utilizzo di una tabella di hash all'albero quando le chiavi non hanno un ordinamento. Per ovvi motivi il tipo `K` della chiave deve implementare i tratti `Eq` (per poter gestire `==` o `!=`) e `Hash` per poter essere trasformate in un "digest" che faccia da indice alla tabella di hash, la chiave in quanto tale DEVE essere **univoca**.
@@ -96,7 +103,7 @@ L'allocazione di una nuova entry può causare la riallocazione dello spazio.
 * `remove(key)` rimuove dalla collezione un elemento con una certa chiave `key`
 * `contains_key(key)`, restituisce un booleano elemento con una certa chiave presente/non presente.
 
-#### Entry
+#### `Entry<'a, K, V>`
 Il lunguaggio Rust offre la possibilità di ottimizzare l'utilizzo delle mappe, mettendo a disposizione il metodo `entry(key)` che ritorna un enumerazione che permette di gestire in modo sicuro ulteriori operazioni sulla entry trovata. In particolare l'enum `Entry<'a, K, V>` offre i metodi:
 * `and_modify<F>(f:F)` nel caso in cui l'elemento venga trovato viene modificato utilizzando la chiusura passata come parametro.
 * `or_insert(valore: V)` nel caso in cui non ci sia, questo viene inserito nella mappa; 
@@ -115,6 +122,9 @@ I metodi forniti per il `BTreeMap` sono più o meno gli stessi con l'aggiunta di
 ## Insiemi
 L'insieme è una collezione costituita da elementi univoci di tipo `V`. 
 
+Per maggiori dettagli, si veda: [Rust Documentation: HashSet\<T\>]()
+Per maggiori dettagli, si veda: [Rust Documentation: BTreeSet\<T\>]()
+
 ### `HashSet<T>`
 Gli elementi dell'insieme sono salvati in un'unica *Tabella di Hash*. E' implementato come un wrapeer intorno all'implementazione di `HashSet<T,()>`.
 
@@ -126,3 +136,5 @@ In entrambe le collezioni ci soni i metodi classici e quelli che realizzano le p
 ## Altre collezioni
 ### `BinaryHeap<T>`
 Questa struttura dati è la realizzazione efficiente di una coda a priorità in cui l'elemento più grande si trova sempre nel fronte della struttura dati. Dovendo stabilire una relazione d'ordine, il tipo `T` deve implementare il tratto `Ord`. Il metodo `peek()` permette di ritornare l'elemento più grande con complessità O(1).
+
+Per maggiori dettagli, si veda: [Rust Documentation: BinaryHeap\<T\>]()
