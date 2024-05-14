@@ -223,7 +223,230 @@ fn main(){
 ```
 
 ## Enum
+In Rust è possibile introdurre tipi enumerativi composti da un semplice valore scalare (come in C/C++), ma anche incapsulare **più tuple o più struct** insieme, queste di solite sono volte a specificare ulteriori informazioni su quel valore specifico. 
+Come anche il Java permette di fare, è possibile legare dei **metodi** ad un tipo enumerativo con la dicitura `impl` seguito dal nome del tipo. 
 
-#### `enum` e clusola `match`
+Seguono due esempi, uno in cui si fa uso delle struct alla streua del C, l'altro invece al modo di  intendere di Rust.
+
+#### C-like style
+```rust
+enum HttpResponse{
+    Ok=200,
+    NotFound=404,
+    InternalError=500
+}
+``` 
+In questo caso si stanno assegnando dei valori (scalari) ai singoli 'casi, se questo non venisse fatto i valori assegnati partirebbero dallo  0.
+
+#### Enumerazioni di Rust
+```rust
+enum HttpResponse{
+    Ok, 
+    NotFound(String), 
+    InternalError{
+        desc: String, 
+        much: i32
+    }
+}
+```
+In questo caso invece una singola struct è formata da un valore vuoto da una stringa e da una struct. I nomi Ok, NotFound e InternalError sono i nomi delle singole varianti della struct. La variante `NotFound` è una `String`, mentre la variante `InternalError` è una struct costituita dai campi `desc`e `much`. Descriviamo qui inoltre la sintassi per inizializzare ogni variante: 
+
+```rust
+/*******************Inizializzazione**************************/
+let var1 = HttpResponse::Ok; 
+let var2 = HttpResponse::NotFound("Non trovato".to_string());
+let var3 = HttpResponse::InternalError{
+    desc: "Descrizione".to_string(), 
+    much: 32
+}; 
+
+/*********************Uso nel costrutto match****************/
+let mia_var = HttpResponse::Ok;
+
+let ris_comp = match mia_var{
+    HttpResponse::Ok => println!("Tutto a posto"), 
+    //tra parentesi nome var temporanea
+    HttpResponse::NotFound(str) =>{
+        println!("Desc_errore: {}", str); 
+        str
+    } 
+    HttpResponse::InternalError{desc: D, much: M} => {
+        println!("Info ricavate {} {}", D, M);
+        (D, M)
+    }
+};
+
+/***********************Uso con if-let***********************/
+//Analisi di una variante specifica
+
+if let HttResponse::NotFound(ris_str) = mia_var{
+    println!("Beccata la variante HttpResponse_NotFound"); 
+}
+```
+
+
+> **Nota che:**  
+Enum è definito come **tipo somma**, in quanto l'insieme dei valori che può contenere è dato dall'unione dei valori che possonono contenere le singole varianti. Le struct al contrario sono un **tipo prodotto**, in quanto l'insieme dei valori che possono rappresentare è dato dal *prodotto cartesiano* dei domini dei singoli campi. 
+
+### Rappresentazioni in memoria degli `enum`
+La *rappresentazione in memoria* di un enum in Rust dipende dalla natura delle sue varianti.
+Rust utilizza un implementazione dei tipi enumerativi basata su **tag**: ad ogni variante è legato un byte che la identifica, nel caso di enum definite in questo modo
+```rust
+enum Colore{Red, Green, Blue}
+```
+Viene allocato in memoria quindi, lo spazio per il tag e quello per un intero. Nel caso invece di un tipo enumerativo in cui sono presenti delle varianti con delle dimensioni eterogenee, in memoria viene riservato:
+* Lo spazio per il tag
+* Lo spazio per la variante più grande. Nel caso in cui la somma `1 Byte + Dim. variante più grande` non sia una potenza di due, vengono aggiunti dei byte di *padding* per una questione di allineamento di memoria.
+
+Di seguito un esempio di rappresentazione per la seguente enum
+```rust
+enum Shape{
+    Square(u32),
+    Point{x:u8, y:u8}, 
+    Empty
+}
+```
+Qui la prima variante occupa un solo byte, la seconda variante occupa 4 byte, mentre la terza 0 byte.
+Viene allocato quindi lo spazio per la variante più grande che è così composto:
+* **1 byte** per il Tag identificativo
+* **4 byte** per rappreseentare l'intero
+* **3 byte** di *padding* affinché la somma (8) sia una potenza di due. Di seguito la figura della rappresentazione in memoria
+
+![](/img/enums.png)
+
+> **Utility**
+Per poter stampare il valore associato ad una struct del tipo
+`enum Prova{A, B, C}` bisogna utilizzare un cast del tipo `Prova::A as i32`.
+
+#### Tipi enumerativi e clausola `match`
+I tipi enumerativi si prestano bene ad essere usati insieme al costrutto `match`, la possibilità di differenziare i diversi casi e di utilizzare delle variabili temporanee offre una maggiore compattezza del codice. 
+
+##### Esempio
+```rust
+#[allow(dead_code)]
+enum Errore{
+    Connessione(String),
+    Hardware{which: String, messaggio: String}
+}
+impl Errore{
+    fn explain_error(&self){
+       match self{
+            Errore::Connessione(mia_str)=>{
+                println!("Messaggio estratto: {}", mia_str); 
+            }, 
+            Errore::Hardware{which: quale, messaggio: mess} => {
+                println!("Valori estratti: {}, {}", quale, mess); 
+            }
+        } 
+    }
+}
+fn main(){
+    let a=Errore::Connessione("Errore generico di connessione".to_string()); 
+    let b=Errore::Hardware{
+        which: "Scheda Madre".to_string(), 
+        messaggio:"Fusione di alcuni circuiti integrati".to_string()
+    }; 
+    a.explain_error();
+    b.explain_error();
+}
+```
+Nell'esempio appena mostrato:
+1. Viene introdotto il tipo enumerativo `Errore` costituito da due varianti (Connessione e Messaggio), uno associato ad una stringa, l'altro ad una struct con due campi; 
+2. Viene data l'implementazione del tipo che include un singolo metodo `explain_error()`
+3. L'unico metodo associato al tipo analizza le diverse varianti del dato con il costrutto `match` che come ricordiamo deve essere esaustivo, cioè deve analizzare tutti i valori del dominio di una certa variabile.
+4. Le variabili utilizzate nella differenziazione dei diversi casi sono *variabili temporanee* introdotte per estrarre il dato specifico associato ad una certa variante.
+
+#### Destrutturazione di un tipo enumerativo
+L'uso del costrutto `match` non è l'unico per esplorare le diverse varianti di un tipo enumerativo. Possono essere utilizzati in particolare i seguenti costrutti:
+1. `if let <pattern> = <valore> {...}`
+2. `while let <pattern> = <valore> {...}` 
+
+Il seguente esempio utilizza questa alternativa:
+
+```rust
+#[allow(dead_code, non_snake_case)]
+enum Color{
+    Red(usize), 
+    Green(usize), 
+    Blue(usize)
+}
+
+fn main(){
+    let my_color = Color::Red(50); 
+
+    if let Color::Red(intensita) = my_color{
+        println!("Colore: Rosso, Intensita: {}", intensita);
+    }
+}
+```
+
+La riga di codice `if let Color::Red(intensita) = my_color` va letta in questo modo:
+* Se la variabile `my_color` è la variante `Color::Red`
+* Metti il valore dell'intero associato nella variabile temporanea denominata `intensita`.
 
 #### Enumerazioni generiche: `Option<T>` e `Result<T,E>`
+Rust offre alcune enumerazioni che sono parametrizzate da tipi generici (*prossimo capitolo*) e che sono alla base della libreria standard. Questi sono: `Option` e `Result`.
+
+#### `Option<T>`
+Permette di gestire i casi in cui c'è presenza o assenza di un certo tipo di valore. Ha due possibili varianti:
+* `Some(T)` è il caso in cui un valore è presente e il tipo associato è T; 
+* `None` variante vuota, denota un fallimento dell'estrapolazione del dato.
+
+#### `Result<T,E>`
+Si usa per notificare il risultato di una computazione, la si può trovare in una delle seguenti varianti:
+* `Ok(T)`, in questo caso il valore restituito ha tipo T(tipo generico) 
+* `Err(E)`, nel caso in cui la computazione fallisca il valore ritornato è di tipo E che viene utilizzatpo per la descrizione dell'errore.
+
+## Esempio ulteriore...
+
+```rust
+#[derive(Debug)]
+enum Error_Yogurt{
+    Confezione(String), 
+    Contenuto(String)
+}
+impl Error_Yogurt{
+    //decapsula l'errore dalla variante enumerativa
+    fn unwrap_error(self)->String{
+        match self{
+            Self::Confezione(s)=>{s},
+            Self::Contenuto(s)=>{s}
+        }
+    }
+    
+}
+#[allow(non_snake_case)]
+fn Valuta_Yogurt(msg: String) -> Result<i32, Error_Yogurt>{
+    if msg=="Tutto ok"{
+        Ok(27)
+    }
+    else if msg=="err_conf"{
+        Err(Error_Yogurt::Confezione("Errore nella confezione".to_string()))
+    }
+    else {
+        Err(Error_Yogurt::Contenuto("Errore nel contenuto".to_string()))
+    }
+}
+fn main(){
+    let mio_msg1 = "Tutto ok".to_string();
+    let mio_msg2 = "err_conf".to_string(); 
+    let mio_msg3 = "altro_msg".to_string();
+    let R1 = Valuta_Yogurt(mio_msg1); 
+    let R2 = Valuta_Yogurt(mio_msg2); 
+    let R3 = Valuta_Yogurt(mio_msg3);
+    
+    if let Ok(var) = R1 {
+        println!("Computazione corretta, valore ritornato: {}", var);
+    }
+    if let Err(errore) = R2 {
+        println!("Errore: {} ", errore.unwrap_error()); 
+    }
+    if let Err(errore) = R3 {
+        println!("Errore:  {} ", errore.unwrap_error());
+    }
+}
+```
+
+
+
+
