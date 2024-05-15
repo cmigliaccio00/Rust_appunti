@@ -93,6 +93,10 @@ In Rust le principali operazioni di I/O sono gestite tramite l'utilizzo di alcun
 Questi tratti sono essenzialmente quattro e sono: `Read`, `BufRead`,`Write` e `Seek`.
 In generale se le operazioni di base abilitate dall'implementazione di questi tratti  producono degli errori, questi sono del tipo enumerativo `ErrorKind` che contiene molte varianti ognuna delle quali afferisce alla descrizione di un certo tipo di errore.
 
+<center>
+    <img src='/img/IO_Traits.png' width='60%'>
+</center>
+
 
 ### `std::io::Read`: leggere un flusso di byte
 Per l'implementazione di questo tratto basta fornire l'implementazione del metodo `read(buf: &mut [u8]) ->Result<usize>` tutti gli altri metodi sono implementati in base all'implementazione di questo metodo. Chiaramente ogni chiamata di `read()` può scatenare una chiamata di sistema con successivo cambio di contesto e questo può portare a dei cali di performance inaccettabili.
@@ -146,7 +150,5 @@ struct Test{
     beta: String
 }
 ```
-
-
 
 
